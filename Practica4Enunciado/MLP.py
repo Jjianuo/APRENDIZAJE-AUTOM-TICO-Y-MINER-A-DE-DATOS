@@ -29,7 +29,9 @@ class MLP:
         z (array_like): activation signal received by the layer.
     """
     def _sigmoid(self,z):
-        return 0
+        ret = (1 + np.exp(-z))
+        ret = 1 / ret 
+        return ret
 
     """
     Run the feedwordward neural network step
@@ -44,6 +46,13 @@ class MLP:
     """
     def feedforward(self,x):
         a1,a2,a3,z2,z3 = 0
+        a1 = np.hstack([np.ones(x.shape[0], 1)], x)
+        z2 = a1.dot(self.theta1)
+        a2 = self._sigmoid(z2)
+
+        a2 = np.hstack([np.ones(a2.shape[0], 1)], a2)
+        z3 = a2.dot(self.theta2)
+        a3 = self._sigmoid(z3)
         return a1,a2,a3,z2,z3 # devolvemos a parte de las activaciones, los valores sin ejecutar la función de activación
 
 
@@ -60,6 +69,11 @@ class MLP:
     """
     def compute_cost(self, yPrime,y): # calcula solo el coste, para no ejecutar nuevamente el feedforward.
         J = 0
+        m = y.shape[0]
+        J = (y * np.log(yPrime)) + ((1 - y) * np.log(1 - yPrime))
+        print(J)
+        J = np.sum((y * np.log(yPrime)) + ((1 - y) * np.log(1 - yPrime)))
+        J /= -m;
         return J
     
 
@@ -74,7 +88,6 @@ class MLP:
 	p (scalar): the class index with the highest activation value.
     """
     def predict(self,a3):
-        p = -1
-        return p
+        return a3.max()
 
     
