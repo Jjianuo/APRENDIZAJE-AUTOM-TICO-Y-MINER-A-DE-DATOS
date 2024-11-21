@@ -59,13 +59,15 @@ Implementation of the one hot encoding... You must use OneHotEncoder function of
 Probably need to use reshape(-1, 1) to change size of the data
 """
 def one_hot_encoding(Y):
-    YEnc = 0
-    #TO-DO: implements
-	return YEnc
+    Y = Y.reshape(-1, 1)
+    enc = OneHotEncoder(handle_unknown='ignore')
+    enc.fit(Y)
+    YEnc = enc.transform(Y).toarray()
+    return YEnc
 
 """
 Implementation of the accuracy metrics function
 """
 def accuracy(P,Y):
-	#TO-DO: implements
-	return -1
+	same = np.sum(P == Y)
+	return same / P.size

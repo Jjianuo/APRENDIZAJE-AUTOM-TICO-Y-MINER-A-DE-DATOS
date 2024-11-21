@@ -45,12 +45,11 @@ class MLP:
     z2,z3 (array_like): signal fuction of two last layers
     """
     def feedforward(self,x):
-        a1,a2,a3,z2,z3 = 0
-        a1 = np.hstack([np.ones(x.shape[0], 1)], x)
+        a1 = np.hstack([np.ones((x.shape[0], 1)), x])
         z2 = a1.dot(self.theta1)
         a2 = self._sigmoid(z2)
 
-        a2 = np.hstack([np.ones(a2.shape[0], 1)], a2)
+        a2 = np.hstack([np.ones((a2.shape[0], 1)), a2])
         z3 = a2.dot(self.theta2)
         a3 = self._sigmoid(z3)
         return a1,a2,a3,z2,z3 # devolvemos a parte de las activaciones, los valores sin ejecutar la función de activación
@@ -70,8 +69,7 @@ class MLP:
     def compute_cost(self, yPrime,y): # calcula solo el coste, para no ejecutar nuevamente el feedforward.
         J = 0
         m = y.shape[0]
-        J = (y * np.log(yPrime)) + ((1 - y) * np.log(1 - yPrime))
-        print(J)
+        #J = (y * np.log(yPrime)) + ((1 - y) * np.log(1 - yPrime))
         J = np.sum((y * np.log(yPrime)) + ((1 - y) * np.log(1 - yPrime)))
         J /= -m;
         return J
