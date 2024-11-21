@@ -11,13 +11,21 @@ class MLP:
         hiddenLayer (int): size of hidden layer.
         outputLayer (int): size of output layer
         seed (scalar): seed of the random numeric.
-        epislom (scalar) : random initialization range. e.j: 1 = [-1..1], 2 = [-2,2]...
+        epislon (scalar) : random initialization range. e.j: 1 = [-1..1], 2 = [-2,2]...
+
+        en la primera input son las filas y hidden las columnas,
+        en la segunda hidden son las filas y output las columnas
     """
 
-    def __init__(self,inputLayer,hidenLayer, outputLayer, seed=0, epislom = 0.12):
+    def __init__(self,inputLayer,hiddenLayer, outputLayer, seed=0, epislon = 0.12):
         np.random.seed(seed)
-        ## TO-DO
+        self.theta1 = np.random.uniform(low=-epislon, high=epislon, size=inputLayer.size)
+        self.theta2 = np.random.uniform(low=-epislon, high=epislon, size=hiddenLayer.size)
 
+        # self.inputLayer = inputLayer
+        # self.hiddenLayer = hiddenLayer
+        # self.outputLayer = outputLayer  
+        # self.epsilon = epislon
         """
     Reset the theta matrix created in the constructor by both theta matrix manualy loaded.
 
@@ -70,8 +78,13 @@ class MLP:
     z2,z3 (array_like): signal fuction of two last layers
     """
     def feedforward(self,x):
-        a1,a2,a3,z2,z3 = 0
-        ##TO-DO
+        a1 = np.hstack([np.ones((x.shape[0], 1)), x])
+        z2 = a1.dot(self.theta1)
+        a2 = self._sigmoid(z2)
+
+        a2 = np.hstack([np.ones((a2.shape[0], 1)), a2])
+        z3 = a2.dot(self.theta2)
+        a3 = self._sigmoid(z3)
         return a1,a2,a3,z2,z3 # devolvemos a parte de las activaciones, los valores sin ejecutar la función de activación
 
 
@@ -88,9 +101,11 @@ class MLP:
 	J (scalar): the cost.
     """
     def compute_cost(self, yPrime,y, lambda_): # es una función interna por eso empieza por _
-        ##TO-DO
         J = 0
-        return J
+        m = y.shape[0]
+        J = np.sum((y * np.log(yPrime)) + ((1 - y) * np.log(1 - yPrime)))
+        J /= -m;
+        return J + self._regularizationL2Cost
     
 
     """
@@ -104,10 +119,7 @@ class MLP:
 	p (scalar): the class index with the highest activation value.
     """
     def predict(self,a3):
-        ##TO-DO
-        p = 0
-        return p
-    
+        return a3.max()
 
     """
     Compute the gradients of both theta matrix parámeters and cost J
@@ -140,8 +152,9 @@ class MLP:
 	L2 Gradient value
     """
     def _regularizationL2Gradient(self, theta, lambda_, m):
-        ##TO-DO
-        return 0
+        ret = np.sum(theta ** 2)
+        ret *= (lambda_/(2 * m))
+        return ret
     
     
     """
@@ -157,7 +170,8 @@ class MLP:
     """
 
     def _regularizationL2Cost(self, m, lambda_):
-        ##TO-DO
+        ret = np.sum(self.theta1 ** 2)
+        ret += np.sum(self.theta2 ** 2)
         return 0
     
     
@@ -165,7 +179,7 @@ class MLP:
         Jhistory = []
         for i in range(numIte):
             J = 0
-            ##TO-DO: calculate gradients and update both theta matrix
+            
             if verbose > 0 :
                 if i % verbose == 0 or i == (numIte-1):
                     print(f"Iteration {(i+1):6}: Cost {float(J):8.4f}   ")

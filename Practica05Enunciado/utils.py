@@ -45,13 +45,15 @@ def load_weights(file):
     return theta1, theta2
 
 def one_hot_encoding(Y):
-    YEnc = 0
-    #TO-DO: implements
+    Y = Y.reshape(-1, 1)
+    enc = OneHotEncoder(handle_unknown='ignore')
+    enc.fit(Y)
+    YEnc = enc.transform(Y).toarray()
     return YEnc
 
 def accuracy(P,Y):
-	#TO-DO: implements
-	return -1
+	same = np.sum(P == Y)
+	return same / P.size
 
 
 ###########################################################################
