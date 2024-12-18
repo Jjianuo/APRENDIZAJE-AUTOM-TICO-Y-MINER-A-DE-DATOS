@@ -2,6 +2,7 @@ from MLP import MLP, target_gradient, costNN, MLP_backprop_predict
 from utils import load_data, load_weights,one_hot_encoding, accuracy
 from public_test import checkNNGradients,MLP_test_step
 from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPClassifier
 
 
 
@@ -15,7 +16,7 @@ def gradientTest():
 
 """
 Test 2 to be executed in Main
-"""
+""" 
 def MLP_test(X_train,y_train, X_test, y_test):
     print("We assume that: random_state of train_test_split  = 0 alpha=1, num_iterations = 2000, test_size=0.33, seed=0 and epislom = 0.12 ")
     print("Test 1 Calculando para lambda = 0")
@@ -30,12 +31,17 @@ def MLP_test(X_train,y_train, X_test, y_test):
 def main():
     print("Main program")
     #Test 1
-    #gradientTest()
-
-    ## TO-DO: descoment both test and create the needed code to execute them.
+    gradientTest()
     
+    x, y = load_data('data/ex3data1.mat')
+    x_train, x_test, y_train, y_test = train_test_split(x, y, train_size = 0.33, random_state = 0)
     #Test 2
-    #MLP_test()
+    MLP_test(x_train, one_hot_encoding(y_train), x_test, y_test)
+
+    clf = MLPClassifier(alpha=1, epsilon=0.12, random_state=0, max_iter=2000).fit(x_train, y_train)
+    clf.predict_proba(x_test)
+    clf.predict(x_test)
+    print(clf.score(x_test, y_test))
 
     
 
